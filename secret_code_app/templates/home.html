@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Code Generator</title>
+    {% load static %}
+    
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>MK Designs | Secret Code Generator >></h1>
+
+        <!-- Form for encoding and decoding messages -->
+        <form method="post">
+            {% csrf_token %}
+            <label for="message">Enter your message:</label>
+            <input type="text" id="message" name="message" value="{{ encoded_message }}" required>
+
+            <button type="submit" name="encode">Encode</button>
+            <button type="submit" name="decode">Decode</button>
+        </form>
+
+        <!-- Display encoded message -->
+        {% if encoded_message %}
+            <h3>Encoded Message:</h3>
+            <textarea id="encodedMessage" readonly>{{ encoded_message }}</textarea>
+            <button onclick="copyToClipboard('encodedMessage')">Copy</button>
+
+            <!-- Display QR Code -->
+            {% if qr_code_img %}
+                <h3>QR Code:</h3>
+                <img src="data:image/png;base64,{{ qr_code_img }}" alt="QR Code">
+            {% endif %}
+        {% endif %}
+
+        <!-- Display decoded message -->
+        {% if decoded_message %}
+            <h3>Decoded Message:</h3>
+            <textarea id="decodedMessage" readonly>{{ decoded_message }}</textarea>
+            <button onclick="copyToClipboard('decodedMessage')">Copy</button>
+        {% endif %}
+
+        <!-- Display time sent -->
+        {% if time_sent %}
+            <p>Time Sent: {{ time_sent }}</p>
+        {% endif %}
+    </div>
+
+    <script>
+        function copyToClipboard(id) {
+            var copyText = document.getElementById(id);
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);  // For mobile devices
+            navigator.clipboard.writeText(copyText.value).then(function() {
+                alert("Copied the text: " + copyText.value);
+            });
+        }
+    </script>
+</body>
+</html>
